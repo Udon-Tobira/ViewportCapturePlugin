@@ -17,4 +17,4 @@ void FViewportCaptureModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FViewportCaptureModule, ViewportCaptureModule)
+IMPLEMENT_MODULE(FViewportCaptureModule, ViewportCapture)
