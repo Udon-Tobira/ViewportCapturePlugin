@@ -53,16 +53,26 @@ void UViewportCapture::Capture_RenderThread(FRDGBuilder& RDGBuilder) {
 		            TEXT("Renderer"));
 		    check(RendererModule);
 
-		    const FIntPoint TargetSize(RenderTextureTarget->SizeX,
-		                               RenderTextureTarget->SizeY);
-		    FRHITexture*    DestRHITexture =
-		        RenderTextureTarget->GetRenderTargetResource()->GetTextureRHI();
+		    // get RenderTargetResource
+		    const auto& RenderTargetResource =
+		        RenderTextureTarget->GetRenderTargetResource();
+		    // if RenderTargetResource is not yet ready (usually takes 1 frame to
+		    // complete)
+		    if (nullptr == RenderTargetResource) {
+			    // do nothing and finish
+			    return;
+		    }
+
+		    FRHITexture* DestRHITexture = RenderTargetResource->GetTextureRHI();
 
 		    FRHIRenderPassInfo DestRPInfo(
 		        DestRHITexture, ERenderTargetActions::Load_Store, DestRHITexture);
 		    RHICmdList.BeginRenderPass(DestRPInfo,
 		                               TEXT("FrameCaptureResolveRenderTarget"));
 		    {
+			    const FIntPoint TargetSize(RenderTextureTarget->SizeX,
+			                               RenderTextureTarget->SizeY);
+
 			    RHICmdList.SetViewport(0, 0, 0.0f, TargetSize.X, TargetSize.Y, 1.0f);
 
 			    FGraphicsPipelineStateInitializer GraphicsPSOInit;
