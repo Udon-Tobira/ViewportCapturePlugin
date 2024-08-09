@@ -21,6 +21,9 @@ void UViewportCapture::StartCapturing() {
 		check(GEngine);
 		check(RenderTextureTarget != nullptr);
 
+		// get ViewportClient
+		ViewportClient = GEngine->GameViewport;
+
 		// insert Capture_RenderThread function after rendering without UI
 		PostRenderDelegateExHandle = GEngine->GetPostRenderDelegateEx().AddUObject(
 		    this, &ThisClass::Capture_RenderThread);
@@ -42,8 +45,6 @@ UViewportCapture::~UViewportCapture() {
 void UViewportCapture::Capture_RenderThread(FRDGBuilder& RDGBuilder) {
 	ensure(IsInRenderingThread());
 	check(RenderTextureTarget != nullptr);
-	GEngine->GameViewport->GetGameViewport()->GetRenderTargetTexture();
-	FTexture2DRHIRef ref;
 
 	AddPass(
 	    RDGBuilder, RDG_EVENT_NAME(__FUNCTION__),
@@ -115,10 +116,9 @@ void UViewportCapture::Capture_RenderThread(FRDGBuilder& RDGBuilder) {
 						PixelShader->SetParameters(RHICmdList, TStaticSamplerState<SF_Bilinear>::GetRHI(), SrcRHISceneTexture);
 					}
 #else
-			    // Widnow Size����ĂȂ��̂�Bilinear�O���
+
 			    FRHITexture* SrcRHISceneTexture =
-			        GEngine->GameViewport->GetGameViewport()
-			            ->GetRenderTargetTexture();
+			        ViewportClient->GetGameViewport()->GetRenderTargetTexture();
 
 			    check(SrcRHISceneTexture);
 			    FRHIBatchedShaderParameters& BatchedParameters =
@@ -130,7 +130,7 @@ void UViewportCapture::Capture_RenderThread(FRDGBuilder& RDGBuilder) {
 			        RHICmdList.GetBoundPixelShader(), BatchedParameters);
 #endif
 			    FVector2D ViewRectSize;
-			    GEngine->GameViewport->GetViewportSize(ViewRectSize);
+			    ViewportClient->GetViewportSize(ViewRectSize);
 			    RendererModule->DrawRectangle(
 			        RHICmdList, 0, 0,               // Dest X, Y
 			        TargetSize.X, TargetSize.Y,     // Dest W, H

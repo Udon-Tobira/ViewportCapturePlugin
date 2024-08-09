@@ -31,5 +31,6 @@ private:
 
 	// internal fields
 private:
-	FDelegateHandle PostRenderDelegateExHandle;
+	FDelegateHandle      PostRenderDelegateExHandle;
+	UGameViewportClient* ViewportClient;
 };
