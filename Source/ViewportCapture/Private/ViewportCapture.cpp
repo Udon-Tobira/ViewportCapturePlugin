@@ -47,7 +47,7 @@ void UViewportCapture::Capture_RenderThread(FRDGBuilder& RDGBuilder) {
 	check(RenderTextureTarget != nullptr);
 
 	AddPass(
-	    RDGBuilder, RDG_EVENT_NAME(__FUNCTION__),
+	    RDGBuilder, RDG_EVENT_NAME("UViewportCapture::Capture_RenderThread"),
 	    [this](FRHICommandListImmediate& RHICmdList) {
 		    IRendererModule* RendererModule =
 		        &FModuleManager::GetModuleChecked<IRendererModule>(
