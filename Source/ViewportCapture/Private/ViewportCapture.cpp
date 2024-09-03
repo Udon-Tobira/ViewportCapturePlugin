@@ -101,7 +101,7 @@ void UViewportCapture::Capture_RenderThread(FRDGBuilder& RDGBuilder) {
 			            PixelShader.GetRHIShaderBase(SF_Pixel));
 			    GraphicsPSOInit.PrimitiveType = PT_TriangleList;
 
-			    SetGraphicsPipelineState(RHICmdList, GraphicsPSOInit);
+			    SetGraphicsPipelineState(RHICmdList, GraphicsPSOInit, 0);
 
 #if 0
 					const bool bIsSourceBackBufferSameAsWindowSize = SrcRHISceneTexture->GetSizeX() == WindowSize.X && SrcRHISceneTexture->GetSizeY() == WindowSize.Y;
